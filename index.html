@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>To-Do List</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #000;
+      overflow: hidden;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .firefly {
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      background: yellow;
+      border-radius: 50%;
+      box-shadow: 0 0 10px 2px yellow;
+      animation: move 10s linear infinite;
+      opacity: 0.8;
+    }
+
+    @keyframes move {
+      0%   { transform: translate(0, 0) scale(1); }
+      50%  { transform: translate(50vw, 50vh) scale(1.5); }
+      100% { transform: translate(0, 0) scale(1); }
+    }
+
+    .todo-container {
+      background: rgb(250, 126, 126);
+      color: #ffffff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgb(255, 255, 255);
+      width: 400px;
+      text-align: center;
+      z-index: 1;
+    }
+
+    .logo {
+      width: 60px;
+      height: 60px;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      color: #ffffff;
+      margin-bottom: 20px;
+    }
+
+    .input-section {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    #taskInput {
+      width: 75%;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ff0000;
+    }
+
+    #addTaskBtn {
+      width: 20%;
+      background-color: #ffffff;
+      color: rgb(0, 0, 0);
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #addTaskBtn:hover {
+      background-color: #000000;
+      color: #ffffff;
+    }
+
+    .control-buttons {
+      display: flex;
+      justify-content: center;
+      margin-top: 15px;
+    }
+
+    .control-buttons button {
+      margin: 0 5px;
+      padding: 8px;
+      border: none;
+      border-radius: 5px;
+      color: #ffffff;
+      background-color: #dc3545;
+      cursor: pointer;
+    }
+
+    .control-buttons button:hover {
+      background-color: #ff0000;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      text-align: left;
+    }
+
+    li {
+      background: #98e4f1;
+      color: #000000;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: start;
+    }
+
+    .done {
+      text-decoration: line-through;
+      color: rgb(0, 0, 0);
+    }
+
+    .task-label {
+      flex: 1;
+      margin-left: 10px;
+      overflow-wrap: anywhere;
+    }
+
+    .task-content {
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Fireflies Background -->
+<div class="background">
+  <div class="firefly" style="top: 10%; left: 20%; animation-delay: 0s;"></div>
+  <div class="firefly" style="top: 30%; left: 70%; animation-delay: 2s;"></div>
+  <div class="firefly" style="top: 60%; left: 40%; animation-delay: 4s;"></div>
+  <div class="firefly" style="top: 80%; left: 10%; animation-delay: 6s;"></div>
+  <div class="firefly" style="top: 50%; left: 90%; animation-delay: 8s;"></div>
+  <div class="firefly" style="top: 15%; left: 50%; animation-delay: 1s;"></div>
+  <div class="firefly" style="top: 70%; left: 30%; animation-delay: 3s;"></div>
+  <div class="firefly" style="top: 25%; left: 85%; animation-delay: 5s;"></div>
+</div>
+
+<!-- To-Do UI -->
+<div class="todo-container">
+  <img src="https://static.thenounproject.com/png/to-do-list-icon-530996-512.png" alt="To-Do Logo" class="logo">
+  <h1>WELCOME TO OUR To-Do List</h1>
+
+  <div class="input-section">
+    <input type="text" id="taskInput" placeholder="Enter a new task...">
+    <button id="addTaskBtn">Add</button>
+  </div>
+
+  <ul id="taskList"></ul>
+
+  <div class="control-buttons">
+    <button id="uncheckAll">Uncheck All</button>
+    <button id="clearAll">Clear All</button>
+  </div>
+</div>
+
+<script>
+  const addTaskBtn = document.getElementById('addTaskBtn');
+  const taskInput = document.getElementById('taskInput');
+  const taskList = document.getElementById('taskList');
+  const clearBtn = document.getElementById('clearAll');
+  const uncheckBtn = document.getElementById('uncheckAll');
+
+  addTaskBtn.addEventListener('click', addTask);
+  taskInput.addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') addTask();
+  });
+
+  function addTask() {
+    const taskText = taskInput.value.trim();
+    if (taskText === '') return;
+
+    const li = document.createElement('li');
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'task-content';
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+
+    const label = document.createElement('span');
+    label.textContent = taskText;
+    label.className = 'task-label';
+
+    checkbox.addEventListener('change', () => {
+      label.classList.toggle('done', checkbox.checked);
+    });
+
+    contentDiv.appendChild(checkbox);
+    contentDiv.appendChild(label);
+    li.appendChild(contentDiv);
+    taskList.appendChild(li);
+    taskInput.value = '';
+  }
+
+  clearBtn.addEventListener('click', () => {
+    taskList.innerHTML = '';
+  });
+
+  uncheckBtn.addEventListener('click', () => {
+    const allCheckboxes = taskList.querySelectorAll('input[type="checkbox"]');
+    const allLabels = taskList.querySelectorAll('.task-label');
+    allCheckboxes.forEach((cb, idx) => {
+      cb.checked = false;
+      allLabels[idx].classList.remove('done');
+    });
+  });
+</script>
+
+</body>
+</html>
